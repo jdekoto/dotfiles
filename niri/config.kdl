@@ -285,7 +285,6 @@ prefer-no-csd
 
 switch-events {
     lid-close { spawn "noctalia" "msg" "session" "suspend"; }
-    lid-open { spawn "noctalia" "msg" "session" "lock"; }
     tablet-mode-on { spawn "bash" "-c" "gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled true"; }
     tablet-mode-off { spawn "bash" "-c" "gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false"; }
 }
@@ -326,14 +325,7 @@ animations {
 // https://yalter.github.io/niri/Configuration:-Window-Rules
 
 // Work around WezTerm's initial configure bug
-// by setting an empty default-column-width.
-window-rule {
-    // This regular expression is intentionally made as specific as possible,
-    // since this is the default config, and we want no false positives.
-    // You can get away with just app-id="wezterm" if you want.
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
-}
+// by setting an empty default-column-width
 
 // Open the Firefox picture-in-picture player as floating by default.
 window-rule {
@@ -366,14 +358,18 @@ window-rule {
 
 window-rule {
   geometry-corner-radius 20
-  match app-id="^kitty$"
-  
-  // commented out cuz alpine still on 25.11 :(
+  match app-id="Alacritty"
   background-effect { 
     blur true 
-    xray false 
+    xray true 
   }
 }
+
+window-rule {
+  match app-id="io.github.tanaybhomia.Whisp"
+  open-floating true
+}
+
 
 window-rule {
   match app-id="dev.noctalia.Nocatlia.Settings"
@@ -404,12 +400,8 @@ binds {
     // Most actions that you can bind here can also be invoked programmatically with
     // `niri msg action do-something`.
 
-    // Mod-Shift-/, which is usually the same as Mod-?,
-    // shows a list of important hotkeys.
-    Mod+Shift+Slash { show-hotkey-overlay; }
-
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
+    Mod+T { spawn-sh "alacritty"; }
     Mod+A { spawn-sh "noctalia msg panel-toggle launcher"; }
     Mod+S { spawn-sh "noctalia msg panel-toggle control-center"; }
     Mod+Shift+Escape { spawn-sh "noctalia msg settings-toggle"; }
@@ -446,6 +438,11 @@ binds {
     F5 repeat=false { toggle-overview; }
 
     Mod+Q repeat=false { close-window; }
+    Mod+Shift+Q repeat=false { spawn-sh "
+    PID=$(niri msg  --json focused-window | jq -r '.pid')
+    [ -n \"$PID\" ] && kill -9 \"$PID\"
+    ";
+    }
 
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
