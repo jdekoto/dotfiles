@@ -11,7 +11,7 @@ live-config = 1
 ; mode = normal
 
 # Accepts only non-negative values.
-; framerate = 60
+framerate = 60
 
 # 'autosens' will attempt to decrease sensitivity if the bars peak. 1 = on, 0 = off
 # new as of 0.6.0 autosens of low values (dynamic range)
@@ -91,8 +91,8 @@ bar_width = 7
 ; method = pulse
 ; source = auto
 
-; method = pipewire
-; source = auto
+method = pipewire
+source = auto
 
 ; method = alsa
 ; source = hw:Loopback,1
@@ -288,7 +288,7 @@ gradient_color_8 = '#cc3333'
 
 # use theme file instead of defining colors in this file
 # themes are located in $HOME/.config/cava/themes
-theme = 'noctalia'
+theme = "noctalia"
 
 
 [smoothing]
